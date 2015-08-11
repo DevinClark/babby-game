@@ -8,7 +8,7 @@ var amanda;
 var background;
 var villagers;
 var ground;
-var platform;
+var platforms;
 
 // variables
 var points = 0;
@@ -17,6 +17,7 @@ var instructions;
 var leftBar;
 var numHits = 0;
 var cursors;
+// var SPACEBAR = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 if (isSafari)
 {
@@ -33,11 +34,14 @@ function preload() {
 // load my world
 game.load.image('background', '../img/kenney_backgroundElements/Samples/colored_talltrees.png');
 
+// load the ground
+game.load.image('ground', '../img/ground.png');
+
 // load Amanda
-game.load.spritesheet('amanda', '../img/Amanda.png', '64', '64', '260');
+game.load.spritesheet('amanda', '../img/Amanda.png', 64, 64, 260);
 
 // load villain
-game.load.spritesheet('villain', '../img/old_man.png', '64', '64', '260');
+game.load.spritesheet('villain', '../img/old_man.png', 64, 64, 260);
 
 }
 
@@ -46,14 +50,18 @@ function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
   // platforms (in case of obstacles if I have time)
-  // platforms = game.add.group();
-  // platforms.enableBody = true;
-  // ground = platforms.create(0, game.world.height + 10, 'ground')
+  platforms = game.add.group();
+  platforms.enableBody = true;
+  ground = platforms.create(0, game.world.height - 136, 'ground');
+	ground.scale.x = width / ground.width;
+	ground.body.immovable = true;
 
   // add the player
-  amanda = game.add.sprite((game.world.width/2), (game.world.height/2), 'amanda');
+  amanda = game.add.sprite((game.world.width * .01), (game.world.height - 200), 'amanda');
   game.physics.arcade.enable(amanda);
   amanda.body.collideWorldBounds = true;
+	amanda.body.gravity.y = 200;
+	amanda.frame = 26;
 
   // add in background
   background = game.add.sprite(0, 0, 'background');
@@ -63,11 +71,32 @@ function create() {
 
   // listen for keypresses
   cursors = game.input.keyboard.createCursorKeys();
+	amanda.animations.add('left', [118, 119, 120, 121, 122, 123, 124, 125], 10, false);
+	amanda.animations.add('right', [144, 145, 146, 147, 148, 149, 150, 151], 10, false);
+	amanda.animations.add('jump', [28, 29, 30, 31, 32], 5, false);
 
 }
 
 // runs the game
-function update() {}
+function update() {
+	game.physics.arcade.collide(platforms, amanda);
+
+	if (cursors.left.isDown) {
+		amanda.animations.play('left');
+		amanda.body.velocity.x = -200;
+	} else if (cursors.right.isDown) {
+		amanda.animations.play('right');
+		amanda.body.velocity.x = 200;
+	} else if (cursors.up.isDown) {
+		if (amanda.body.touching.down) {
+			amanda.animations.play('jump');
+			amanda.body.velocity.y = -300;
+		}
+	} else {
+		amanda.body.velocity.x = 0;
+		amanda.frame = 26;
+	}
+}
 
 // in case weirdos use Safari
 function isSafari()
