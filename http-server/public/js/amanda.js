@@ -7,6 +7,7 @@ var game;
 var amanda;
 var background;
 var villagers;
+var victor;
 var ground;
 var platforms;
 
@@ -41,7 +42,7 @@ game.load.image('ground', '../img/ground.png');
 game.load.spritesheet('amanda', '../img/Amanda.png', 64, 64, 260);
 
 // load villain
-game.load.spritesheet('villain', '../img/old_man.png', 64, 64, 260);
+game.load.spritesheet('victor', '../img/old_man.png', 64, 64, 260);
 
 }
 
@@ -63,6 +64,13 @@ function create() {
 	amanda.body.gravity.y = 200;
 	amanda.frame = 26;
 
+	// add angry villagers
+	villagers = game.add.group();
+	villagers.enableBody = true;
+	victor = villagers.create((game.world.width + (game.world.width * .01)), (game.world.height - 200), 'victor');
+	victor.body.velocity.x = -200;
+
+
   // add in background
   background = game.add.sprite(0, 0, 'background');
   background.scale.x = (width/background.width);
@@ -75,11 +83,16 @@ function create() {
 	amanda.animations.add('right', [144, 145, 146, 147, 148, 149, 150, 151], 10, false);
 	amanda.animations.add('jump', [28, 29, 30, 31, 32], 5, false);
 
+	// angry villagers animations 'WE WILL GET YOU'
+	victor.animations.add('shuffle', [118, 119, 120, 121, 122, 123, 124, 125], 10, true);
+	victor.animations.play('shuffle');
+
 }
 
 // runs the game
 function update() {
 	game.physics.arcade.collide(platforms, amanda);
+	// victor.animations.play('shuffle');
 
 	if (cursors.left.isDown) {
 		amanda.animations.play('left');
@@ -87,15 +100,20 @@ function update() {
 	} else if (cursors.right.isDown) {
 		amanda.animations.play('right');
 		amanda.body.velocity.x = 200;
-	} else if (cursors.up.isDown) {
-		if (amanda.body.touching.down) {
-			amanda.animations.play('jump');
-			amanda.body.velocity.y = -300;
-		}
 	} else {
 		amanda.body.velocity.x = 0;
 		amanda.frame = 26;
 	}
+	if (cursors.up.isDown) {
+		if (amanda.body.touching.down) {
+			amanda.animations.play('jump');
+			amanda.body.velocity.y = -300;
+		}
+	}
+	// else {
+	// 	amanda.body.velocity.x = 0;
+	// 	amanda.frame = 26;
+	// }
 }
 
 // in case weirdos use Safari
