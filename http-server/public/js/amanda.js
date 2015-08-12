@@ -61,7 +61,7 @@ function create() {
   amanda = game.add.sprite((game.world.width * .01), (game.world.height - 200), 'amanda');
   game.physics.arcade.enable(amanda);
   amanda.body.collideWorldBounds = true;
-	amanda.body.gravity.y = 200;
+	amanda.body.gravity.y = 900;
 	amanda.frame = 26;
 
 	// add angry villagers
@@ -72,7 +72,7 @@ function create() {
 
 
   // add in background
-  background = game.add.sprite(0, 0, 'background');
+  background = game.add.tileSprite(0, 0, game.world.bounds.width, game.cache.getImage('background').height, 'background');
   background.scale.x = (width/background.width);
   background.scale.y = (height/background.height);
   game.world.sendToBack(background);
@@ -92,14 +92,14 @@ function create() {
 // runs the game
 function update() {
 	game.physics.arcade.collide(platforms, amanda);
-	// victor.animations.play('shuffle');
+	background.tilePosition.x -= 2.5;
 
 	if (cursors.left.isDown) {
 		amanda.animations.play('left');
-		amanda.body.velocity.x = -200;
+		amanda.body.velocity.x = -125;
 	} else if (cursors.right.isDown) {
 		amanda.animations.play('right');
-		amanda.body.velocity.x = 200;
+		amanda.body.velocity.x = 125;
 	} else {
 		amanda.body.velocity.x = 0;
 		amanda.frame = 26;
@@ -107,7 +107,7 @@ function update() {
 	if (cursors.up.isDown) {
 		if (amanda.body.touching.down) {
 			amanda.animations.play('jump');
-			amanda.body.velocity.y = -300;
+			amanda.body.velocity.y = -400;
 		}
 	}
 	// else {
