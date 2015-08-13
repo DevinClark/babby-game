@@ -1,6 +1,6 @@
 // screen Size
-var height = 800;
-var width = 800;
+var height = window.innerHeight;
+var width = window.innerWidth;
 
 // assets
 var game;
@@ -18,6 +18,8 @@ var instructions;
 var leftBar;
 var numHits = 0;
 var cursors;
+var lives = 3;
+var counter = 70;
 // var SPACEBAR = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 if (isSafari)
@@ -56,6 +58,7 @@ function create() {
   ground = platforms.create(0, game.world.height - 136, 'ground');
 	ground.scale.x = width / ground.width;
 	ground.body.immovable = true;
+	leftPlatform = platforms.create(0, game.world.height + 1, 'leftPlatform');
 
   // add the player
   amanda = game.add.sprite((game.world.width * .01), (game.world.height - 200), 'amanda');
@@ -87,12 +90,15 @@ function create() {
 	victor.animations.add('shuffle', [118, 119, 120, 121, 122, 123, 124, 125], 10, true);
 	victor.animations.play('shuffle');
 
+	makeVillagers();
+
 }
 
 // runs the game
 function update() {
 	game.physics.arcade.collide(platforms, amanda);
-	background.tilePosition.x -= 2.5;
+
+	background.tilePosition.x -= 2;
 
 	if (cursors.left.isDown) {
 		amanda.animations.play('left');
@@ -102,7 +108,7 @@ function update() {
 		amanda.body.velocity.x = 125;
 	} else {
 		amanda.body.velocity.x = 0;
-		amanda.frame = 26;
+		amanda.animations.play('right');
 	}
 	if (cursors.up.isDown) {
 		if (amanda.body.touching.down) {
@@ -114,6 +120,23 @@ function update() {
 	// 	amanda.body.velocity.x = 0;
 	// 	amanda.frame = 26;
 	// }
+}
+
+function makeVillagers() {
+	if(lives > 0) {
+		for(var i = 0; i < 70; i++) {
+			victor = villagers.create((game.world.width * (Math.random() * 25)), (game.world.height - 200), 'victor');
+			victor.animations.add('shuffle', [118, 119, 120, 121, 122, 123, 124, 125], 10, true);
+			victor.animations.play('shuffle');
+			victor.body.velocity.x = -200;
+		}
+	}
+}
+
+function countVillagers() {
+	var j = 1;
+	j++
+	victor.kill();
 }
 
 // in case weirdos use Safari
