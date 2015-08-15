@@ -18,9 +18,9 @@ var instructions;
 var leftBar;
 var numHits = 0;
 var cursors;
-var lives = 3;
+var lives = 5;
 var counter = 70;
-// var SPACEBAR = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+var space;
 
 if (isSafari)
 {
@@ -51,6 +51,7 @@ game.load.spritesheet('victor', '../img/old_man.png', 64, 64, 260);
 function create() {
   // load phaser
   game.physics.startSystem(Phaser.Physics.ARCADE);
+	space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
   // platforms (in case of obstacles if I have time)
   platforms = game.add.group();
@@ -70,8 +71,13 @@ function create() {
 	// add angry villagers
 	villagers = game.add.group();
 	villagers.enableBody = true;
+	villagers.setAll('checkWorldBounds', true);
+	villagers.setAll('outOfBoundsKill', true);
 	victor = villagers.create((game.world.width + (game.world.width * .01)), (game.world.height - 200), 'victor');
 	victor.body.velocity.x = -200;
+
+	// set timer for villagers to be created
+	game.time.events.loop(Phaser.Timer.SECOND, makeVillagers, this);
 
 
   // add in background
@@ -84,7 +90,7 @@ function create() {
   cursors = game.input.keyboard.createCursorKeys();
 	amanda.animations.add('left', [118, 119, 120, 121, 122, 123, 124, 125], 10, false);
 	amanda.animations.add('right', [144, 145, 146, 147, 148, 149, 150, 151], 10, false);
-	amanda.animations.add('jump', [28, 29, 30, 31, 32], 5, false);
+	amanda.animations.add('hit', [208, 209, 210, 211, 212], 10, false);
 
 	// angry villagers animations 'WE WILL GET YOU'
 	victor.animations.add('shuffle', [118, 119, 120, 121, 122, 123, 124, 125], 10, true);
@@ -97,12 +103,13 @@ function create() {
 // runs the game
 function update() {
 	game.physics.arcade.collide(platforms, amanda);
+	space.onDown.add(useSpaceBar, this);
 
 	background.tilePosition.x -= 2;
 
 	if (cursors.left.isDown) {
 		amanda.animations.play('left');
-		amanda.body.velocity.x = -125;
+		amanda.body.velocity.x = -325;
 	} else if (cursors.right.isDown) {
 		amanda.animations.play('right');
 		amanda.body.velocity.x = 125;
@@ -113,19 +120,16 @@ function update() {
 	if (cursors.up.isDown) {
 		if (amanda.body.touching.down) {
 			amanda.animations.play('jump');
-			amanda.body.velocity.y = -400;
+			amanda.body.velocity.y = -600;
 		}
 	}
-	// else {
-	// 	amanda.body.velocity.x = 0;
-	// 	amanda.frame = 26;
-	// }
+	game.physics.arcade.overlap(amanda, villagers, minusOne, null, this);
 }
 
 function makeVillagers() {
 	if(lives > 0) {
-		for(var i = 0; i < 70; i++) {
-			victor = villagers.create((game.world.width * (Math.random() * 25)), (game.world.height - 200), 'victor');
+		for(var i = 0; i < 5; i++) {
+			victor = villagers.create(game.world.width + (game.world.width * (Math.random() * 25)) + 192, (game.world.height - 200), 'victor');
 			victor.animations.add('shuffle', [118, 119, 120, 121, 122, 123, 124, 125], 10, true);
 			victor.animations.play('shuffle');
 			victor.body.velocity.x = -200;
@@ -133,10 +137,18 @@ function makeVillagers() {
 	}
 }
 
-function countVillagers() {
-	var j = 1;
-	j++
-	victor.kill();
+function minusOne(amanda, villager) {
+	villager.kill();
+	lives -= 1;
+	console.log(lives);
+	if(lives == 0) {
+		amanda.kill(); // GAME OVER
+	}
+}
+
+function useSpaceBar(){
+	console.log('SPACEBAR');
+	console.log(amanda.animations.play('hit'));
 }
 
 // in case weirdos use Safari
