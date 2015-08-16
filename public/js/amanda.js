@@ -12,22 +12,16 @@ var ground;
 var platforms;
 
 // variables
-var points = 0;
+var score = 0;
 var velocity = 200;
 var instructions;
-var leftBar;
-var numHits = 0;
 var cursors;
 var lives = 5;
-var counter = 70;
-var space;
+var centerText;
 
-if (isSafari)
-{
+if(isSafari) {
 	game = new Phaser.Game(width, height, Phaser.CANVAS, 'midDiv', { preload: preload, create: create, update: update });
-}
-else
-{
+} else {
 	game = new Phaser.Game(width, height, Phaser.AUTO, 'midDiv', { preload: preload, create: create, update: update });
 }
 
@@ -59,7 +53,6 @@ function create() {
   ground = platforms.create(0, game.world.height - 136, 'ground');
 	ground.scale.x = width / ground.width;
 	ground.body.immovable = true;
-	leftPlatform = platforms.create(0, game.world.height + 1, 'leftPlatform');
 
   // add the player
   amanda = game.add.sprite((game.world.width * .01), (game.world.height - 200), 'amanda');
@@ -86,6 +79,9 @@ function create() {
   background.scale.y = (height/background.height);
   game.world.sendToBack(background);
 
+	// centertext shizz
+	centerText = game.add.text(game.world.centerX, game.world.centerY, "");
+
   // listen for keypresses
   cursors = game.input.keyboard.createCursorKeys();
 	amanda.animations.add('left', [118, 119, 120, 121, 122, 123, 124, 125], 10, false);
@@ -103,9 +99,12 @@ function create() {
 // runs the game
 function update() {
 	game.physics.arcade.collide(platforms, amanda);
-	space.onDown.add(useSpaceBar, this);
 
-	background.tilePosition.x -= 2;
+	if (lives > 0) {
+		if (!cursors.down.isDown) {
+			background.tilePosition.x -= 2;
+		}
+	}
 
 	if (cursors.left.isDown) {
 		amanda.animations.play('left');
@@ -119,21 +118,38 @@ function update() {
 	}
 	if (cursors.up.isDown) {
 		if (amanda.body.touching.down) {
-			amanda.animations.play('jump');
 			amanda.body.velocity.y = -600;
 		}
 	}
-	game.physics.arcade.overlap(amanda, villagers, minusOne, null, this);
+	if (!amanda.body.touching.down) {
+		game.physics.arcade.overlap(amanda, villagers, jumpOn, null, this);
+		console.log(score);
+	} else if (cursors.down.isDown) {
+		amanda.frame = 259;
+		game.physics.arcade.overlap(amanda, villagers, hit, null, this);
+		console.log(score);
+	} else {
+		game.physics.arcade.overlap(amanda, villagers, minusOne, null, this);
+	}
 }
 
 function makeVillagers() {
 	if(lives > 0) {
-		for(var i = 0; i < 5; i++) {
-			victor = villagers.create(game.world.width + (game.world.width * (Math.random() * 25)) + 192, (game.world.height - 200), 'victor');
-			victor.animations.add('shuffle', [118, 119, 120, 121, 122, 123, 124, 125], 10, true);
-			victor.animations.play('shuffle');
-			victor.body.velocity.x = -200;
-		}
+		var num = Math.round(score/200) + 1;
+		numVillagers(num);
+		console.log(num);
+		console.log('line 144');
+	}
+}
+
+function numVillagers(num) {
+	console.log(num);
+	console.log('line 150');
+	for(var i = 0; i < num; i++) {
+		victor = villagers.create(game.world.width + (game.world.width * (Math.random())), (game.world.height - 200), 'victor');
+		victor.animations.add('shuffle', [118, 119, 120, 121, 122, 123, 124, 125], 10, true);
+		victor.animations.play('shuffle');
+		victor.body.velocity.x = -200;
 	}
 }
 
@@ -143,12 +159,37 @@ function minusOne(amanda, villager) {
 	console.log(lives);
 	if(lives == 0) {
 		amanda.kill(); // GAME OVER
+		villagers.forEachAlive(killEmAll, this);
+		writeCenter("GAME OVER")
 	}
 }
 
-function useSpaceBar(){
-	console.log('SPACEBAR');
-	console.log(amanda.animations.play('hit'));
+function jumpOn(amanda, villager) {
+	villager.kill();
+	score += 10;
+	console.log(score);
+}
+
+function hit(amanda, villager) {
+	villager.kill();
+	score += 2;
+	console.log(score);
+}
+
+function killEmAll(villager) {
+	villager.kill();
+}
+
+function writeCenter(text) {
+	centerText.destroy();
+	centerText = game.add.text(game.world.centerX, game.world.centerY, text);
+	centerText.anchor.set(0.5);
+	centerText.align = 'center';
+
+	//	Font style
+	centerText.font = 'Arial';
+	centerText.fontSize = '5em';
+	centerText.fill = '#8B5742';
 }
 
 // in case weirdos use Safari
