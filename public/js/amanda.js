@@ -33,16 +33,16 @@ if(isSafari) {
 function preload() {
 
 // load my world
-game.load.image('background', '../img/kenney_backgroundElements/Samples/colored_talltrees.png');
+game.load.image('background', '/public/img/kenney_backgroundElements/Samples/colored_talltrees.png');
 
 // load the ground
-game.load.image('ground', '../img/ground.png');
+game.load.image('ground', '/public/img/ground.png');
 
 // load Amanda
-game.load.spritesheet('amanda', '../img/Amanda.png', 64, 64, 260);
+game.load.spritesheet('amanda', '/public/img/Amanda.png', 64, 64, 260);
 
 // load villain
-game.load.spritesheet('victor', '../img/old_man.png', 64, 64, 260);
+game.load.spritesheet('victor', '/public/img/old_man.png', 64, 64, 260);
 
 scoreText = game.add.text(3, 0, 'Score: 0', {fontSize: '2em', fill: '#8B5742'});
 livesText = game.add.text(3, 20, 'Patience: 5', {fontSize: '2em', fill: '#8B5742'});
