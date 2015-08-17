@@ -13,11 +13,15 @@ var platforms;
 
 // variables
 var score = 0;
+var scoreText;
 var velocity = 200;
 var instructions;
 var cursors;
 var lives = 5;
+var livesText;
 var centerText;
+var started = false;
+var instructionPage = 0;
 
 if(isSafari) {
 	game = new Phaser.Game(width, height, Phaser.CANVAS, 'midDiv', { preload: preload, create: create, update: update });
@@ -40,12 +44,33 @@ game.load.spritesheet('amanda', '../img/Amanda.png', 64, 64, 260);
 // load villain
 game.load.spritesheet('victor', '../img/old_man.png', 64, 64, 260);
 
+scoreText = game.add.text(3, 0, 'Score: 0', {fontSize: '2em', fill: '#8B5742'});
+livesText = game.add.text(3, 20, 'Patience: 5', {fontSize: '2em', fill: '#8B5742'});
+
+}
+
+function showInstructions() {
+	var instructions1 = "Help Amanda avoid awkward situations!";
+	var instructions2 = "In a world where it's culturally appropriate to touch a woman's stomach,\n Amanda needs help stopping these weirdos!";
+	var instructions3 = "Run back and forth with your arrow keys to avoid the weirdos.";
+	var instructions4 = "Use the down arrow to stop them from coming closer.";
+	var instructions5 = "Use the up arrow to jump on them for extra points!";
+	var instructionList = [instructions1, instructions2, instructions3, instructions4, instructions5];
+
+	if (instructionPage < 5) {
+		writeCenter(instructionList[instructionPage], 1, null);
+		instructionPage++;
+		game.paused = true;
+	} else {
+		centerText.destroy();
+		started = true;
+	}
 }
 
 function create() {
   // load phaser
   game.physics.startSystem(Phaser.Physics.ARCADE);
-	space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	game.input.onDown.add(unpause, self);
 
   // platforms (in case of obstacles if I have time)
   platforms = game.add.group();
@@ -100,6 +125,10 @@ function create() {
 function update() {
 	game.physics.arcade.collide(platforms, amanda);
 
+	if(!started) {
+		showInstructions();
+	}
+
 	if (lives > 0) {
 		if (!cursors.down.isDown) {
 			background.tilePosition.x -= 2;
@@ -123,11 +152,9 @@ function update() {
 	}
 	if (!amanda.body.touching.down) {
 		game.physics.arcade.overlap(amanda, villagers, jumpOn, null, this);
-		console.log(score);
 	} else if (cursors.down.isDown) {
 		amanda.frame = 259;
 		game.physics.arcade.overlap(amanda, villagers, hit, null, this);
-		console.log(score);
 	} else {
 		game.physics.arcade.overlap(amanda, villagers, minusOne, null, this);
 	}
@@ -135,10 +162,8 @@ function update() {
 
 function makeVillagers() {
 	if(lives > 0) {
-		var num = Math.round(score/200) + 1;
+		var num = Math.round(score/500) + 1;
 		numVillagers(num);
-		console.log(num);
-		console.log('line 144');
 	}
 }
 
@@ -154,8 +179,9 @@ function numVillagers(num) {
 }
 
 function minusOne(amanda, villager) {
-	villager.kill();
+	villager.destroy();
 	lives -= 1;
+	livesText.text = 'Patience: ' + lives;
 	console.log(lives);
 	if(lives == 0) {
 		amanda.kill(); // GAME OVER
@@ -165,14 +191,16 @@ function minusOne(amanda, villager) {
 }
 
 function jumpOn(amanda, villager) {
-	villager.kill();
+	villager.destroy();
 	score += 10;
+	scoreText.text = 'Score: ' + score;
 	console.log(score);
 }
 
 function hit(amanda, villager) {
-	villager.kill();
+	villager.destroy();
 	score += 2;
+	scoreText.text = 'Score: ' + score;
 	console.log(score);
 }
 
@@ -188,8 +216,12 @@ function writeCenter(text) {
 
 	//	Font style
 	centerText.font = 'Arial';
-	centerText.fontSize = '5em';
+	centerText.fontSize = '3em';
 	centerText.fill = '#8B5742';
+}
+
+function unpause(event) {
+	game.paused = false;
 }
 
 // in case weirdos use Safari
