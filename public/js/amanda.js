@@ -10,6 +10,7 @@ var villagers;
 var victor;
 var ground;
 var platforms;
+var currentVillager;
 
 // variables
 var score = 0;
@@ -22,6 +23,9 @@ var livesText;
 var centerText;
 var started = false;
 var instructionPage = 0;
+var awkwardQuestions = [
+	"When is the baby due?", "Are you having a boy or a girl?", "You look like you're ready to pop!", "Can I touch your belly?", "You look so small!", "You look so big!", "Are you pregnant?", "What's the baby doing in there?", "Do you need to sit down?", "Here let me get that for you...", "You must be having a girl because...", "You must be having a boy because...", "Are you sure you aren't having twins??", "Are you old enough to be having a baby?", "Should you be doing this in your condition?", "Are you excited?", "Don't you just LOVE being pregnant?", "How old are you?", "Will you have any more?", "How are you feeling?", "Are you ready?", "Haven't you had that baby yet?", "The secret to raising kids is...", "Remember to sleep when the baby sleeps.", "They grow up so fast...", "You're getting an epidural, right?", "Natural birth is the only way to go.", "Are you married?", "Have you finished the nursery?", "Are you scared?", "I don't have kids, but here's what I think...", "What language are you going to teach him?", "Where is she going to go to college?", "Have you got the preschool picked out yet?", "I knew this one lady who...", "Back in my day...", "Do you think you'll be a good mom?", "Do you have a name picked out yet?", "If you think that's bad, let me tell you...", "If you think pregnancy is bad, wait until the terrible twos!", "This isn't so bad, just wait until she's a teenager!", "It's a good thing you're having a boy, because girl's are the worst!", "It's a good thing you're having a girl, because boys are the worst!", "How many kids do you want?", "Have you read any parenting books?", "What's your parenting style?", "I NEVER did that", "Don't forget to avoid alcohol!", "Make sure you microwave your sandwich meats!", "Don't worry, it gets better."
+];
 
 if(isSafari) {
 	game = new Phaser.Game(width, height, Phaser.CANVAS, 'midDiv', { preload: preload, create: create, update: update });
@@ -51,13 +55,14 @@ livesText = game.add.text(3, 20, 'Patience: 5', {fontSize: '2em', fill: '#8B5742
 
 function showInstructions() {
 	var instructions1 = "Help Amanda avoid awkward situations!";
-	var instructions2 = "In a world where it's culturally appropriate to touch a woman's stomach,\n Amanda needs help stopping these weirdos!";
+	var instructions2 = "In a world where it's culturally appropriate to touch a woman's stomach,\nand ask her awkward questions,\nAmanda needs help stopping these weirdos!";
 	var instructions3 = "Run back and forth with your arrow keys to avoid the weirdos.";
 	var instructions4 = "Use the down arrow to stop them from coming closer.";
 	var instructions5 = "Use the up arrow to jump on them for extra points!";
-	var instructionList = [instructions1, instructions2, instructions3, instructions4, instructions5];
+	var instructions6 = "Be careful not to get too close to the weirdos,\nor else you'll have to listen to their unsolicited advice,\nand Amanda will start to lose patience!";
+	var instructionList = [instructions1, instructions2, instructions3, instructions4, instructions5, instructions6];
 
-	if (instructionPage < 5) {
+	if (instructionPage < 6) {
 		writeCenter(instructionList[instructionPage], 1, null);
 		instructionPage++;
 		game.paused = true;
@@ -125,6 +130,10 @@ function create() {
 function update() {
 	game.physics.arcade.collide(platforms, amanda);
 
+	if(currentVillager) {
+		currentVillager.destroy();
+	}
+
 	if(!started) {
 		showInstructions();
 	}
@@ -179,14 +188,19 @@ function numVillagers(num) {
 }
 
 function minusOne(amanda, villager) {
-	villager.destroy();
+	amanda.frame = 31;
+	villager.frame = 172;
+	game.paused = true;
+	currentVillager = villager;
 	lives -= 1;
 	livesText.text = 'Patience: ' + lives;
-	console.log(lives);
+	var awk = awkwardQuestions[Math.round(Math.random() * awkwardQuestions.length)];
+	writeCenter(awk);
+	game.input.onDown.add(unpause, self);
 	if(lives == 0) {
 		amanda.kill(); // GAME OVER
 		villagers.forEachAlive(killEmAll, this);
-		writeCenter("GAME OVER")
+		writeCenter("GAME OVER\nRefresh to play again!")
 	}
 }
 
@@ -210,7 +224,7 @@ function killEmAll(villager) {
 
 function writeCenter(text) {
 	centerText.destroy();
-	centerText = game.add.text(game.world.centerX, game.world.centerY, text);
+	centerText = game.add.text(game.world.centerX, 100, text);
 	centerText.anchor.set(0.5);
 	centerText.align = 'center';
 
@@ -222,6 +236,7 @@ function writeCenter(text) {
 
 function unpause(event) {
 	game.paused = false;
+	centerText.destroy();
 }
 
 // in case weirdos use Safari
