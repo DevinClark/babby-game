@@ -23,6 +23,9 @@ var livesText;
 var centerText;
 var started = false;
 var instructionPage = 0;
+var rawr;
+var rawrX = 0.25;
+var rawrY = 0.25;
 var awkwardQuestions = [
 	"When is the baby due?", "Are you having a boy or a girl?", "You look like you're ready to pop!", "Can I touch your belly?", "You look so small!", "You look so big!", "Are you pregnant?", "What's the baby doing in there?", "Do you need to sit down?", "Here let me get that for you...", "You must be having a girl because...", "You must be having a boy because...", "Are you sure you aren't having twins??", "Are you old enough to be having a baby?", "Should you be doing this in your condition?", "Are you excited?", "Don't you just LOVE being pregnant?", "How old are you?", "Will you have any more?", "How are you feeling?", "Are you ready?", "Haven't you had that baby yet?", "The secret to raising kids is...", "Remember to sleep when the baby sleeps.", "They grow up so fast...", "You're getting an epidural, right?", "Natural birth is the only way to go.", "Are you married?", "Have you finished the nursery?", "Are you scared?", "I don't have kids, but here's what I think...", "What language are you going to teach him?", "Where is she going to go to college?", "Have you got the preschool picked out yet?", "I knew this one lady who...", "Back in my day...", "Do you think you'll be a good mom?", "Do you have a name picked out yet?", "If you think that's bad, let me tell you...", "If you think pregnancy is bad, wait until the terrible twos!", "This isn't so bad, just wait until she's a teenager!", "It's a good thing you're having a boy, because girl's are the worst!", "It's a good thing you're having a girl, because boys are the worst!", "How many kids do you want?", "Have you read any parenting books?", "What's your parenting style?", "I NEVER did that", "Don't forget to avoid alcohol!", "Make sure you microwave your sandwich meats!", "Don't worry, it gets better."
 ];
@@ -37,16 +40,25 @@ if(isSafari) {
 function preload() {
 
 // load my world
-game.load.image('background', '/babby-game/public/img/kenney_backgroundElements/Samples/colored_talltrees.png');
+game.load.image('background', '/img/kenney_backgroundElements/Samples/colored_talltrees.png');
 
 // load the ground
-game.load.image('ground', '/babby-game/public/img/ground.png');
+game.load.image('ground', '/img/ground.png');
+
+// load angry swear words
+game.load.image('angry', '/img/angry.png');
+
+game.load.image('angry', '/img/angry/angry1.png');
+game.load.image('angry', '/img/angry/angry2.png');
+game.load.image('angry', '/img/angry/angry3.png');
+game.load.image('angry', '/img/angry/angry4.png');
+game.load.image('angry', '/img/angry/angry5.png');
 
 // load Amanda
-game.load.spritesheet('amanda', '/babby-game/public/img/Amanda.png', 64, 64, 260);
+game.load.spritesheet('amanda', '/img/Amanda.png', 64, 64, 260);
 
 // load villain
-game.load.spritesheet('victor', '/babby-game/public/img/old_man.png', 64, 64, 260);
+game.load.spritesheet('victor', '/img/old_man.png', 64, 64, 260);
 
 scoreText = game.add.text(3, 0, 'Score: 0', {fontSize: '2em', fill: '#8B5742'});
 livesText = game.add.text(3, 20, 'Patience: 5', {fontSize: '2em', fill: '#8B5742'});
@@ -188,6 +200,10 @@ function numVillagers(num) {
 }
 
 function minusOne(amanda, villager) {
+	rawr = game.add.sprite(0, 0, 'angry');
+	rawr.scale.setTo(rawrX, rawrY);
+	rawr.x = (amanda.left + ((amanda.width/1.9) - (rawr.width/1.5)));
+	rawr.y = amanda.top - rawr.height;
 	amanda.frame = 31;
 	villager.frame = 172;
 	game.paused = true;
@@ -198,7 +214,10 @@ function minusOne(amanda, villager) {
 	writeCenter(awk);
 	game.input.onDown.add(unpause, self);
 	if(lives == 0) {
-		amanda.kill(); // GAME OVER
+		amanda.x = (game.world.width / 2) - (amanda.width / 1.9); // GAME OVER
+		rawr.scale.setTo(0.9,0.9);
+		rawr.x = (game.world.width / 2) - (rawr.width / 1.5);
+		rawr.y = (game.world.height / 2) - (rawr.width / 2);
 		villagers.forEachAlive(killEmAll, this);
 		writeCenter("GAME OVER\nRefresh to play again!")
 	}
@@ -237,6 +256,9 @@ function writeCenter(text) {
 function unpause(event) {
 	game.paused = false;
 	centerText.destroy();
+	rawr.destroy();
+	rawrX += 0.1;
+	rawrY += 0.1;
 }
 
 // in case weirdos use Safari
