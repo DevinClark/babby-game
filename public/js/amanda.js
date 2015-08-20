@@ -23,8 +23,9 @@ var livesText;
 var centerText;
 var started = false;
 var instructionPage = 0;
+var pauseKey;
 var awkwardQuestions = [
-	"When is the baby due?", "Are you having a boy or a girl?", "You look like you're ready to pop!", "Can I touch your belly?", "You look so small!", "You look so big!", "Are you pregnant?", "What's the baby doing in there?", "Do you need to sit down?", "Here let me get that for you...", "You must be having a girl because...", "You must be having a boy because...", "Are you sure you aren't having twins??", "Are you old enough to be having a baby?", "Should you be doing this in your condition?", "Are you excited?", "Don't you just LOVE being pregnant?", "How old are you?", "Will you have any more?", "How are you feeling?", "Are you ready?", "Haven't you had that baby yet?", "The secret to raising kids is...", "Remember to sleep when the baby sleeps.", "They grow up so fast...", "You're getting an epidural, right?", "Natural birth is the only way to go.", "Are you married?", "Have you finished the nursery?", "Are you scared?", "I don't have kids, but here's what I think...", "What language are you going to teach him?", "Where is she going to go to college?", "Have you got the preschool picked out yet?", "I knew this one lady who...", "Back in my day...", "Do you think you'll be a good mom?", "Do you have a name picked out yet?", "If you think that's bad, let me tell you...", "If you think pregnancy is bad, wait until the terrible twos!", "This isn't so bad, just wait until she's a teenager!", "It's a good thing you're having a boy, because girl's are the worst!", "It's a good thing you're having a girl, because boys are the worst!", "How many kids do you want?", "Have you read any parenting books?", "What's your parenting style?", "I NEVER did that", "Don't forget to avoid alcohol!", "Make sure you microwave your sandwich meats!", "Don't worry, it gets better."
+	"When is the baby due?", "Are you having a boy or a girl?", "You look like you're ready to pop!", "Can I touch your belly?", "You look so small!", "You look so big!", "Are you pregnant?", "What's the baby doing in there?", "Do you need to sit down?", "Here let me get that for you...", "You must be having a girl because...", "You must be having a boy because...", "Are you sure you aren't having twins??", "Are you old enough to be having a baby?", "Should you be doing this in your condition?", "Are you excited?", "Don't you just LOVE being pregnant?", "How old are you?", "Will you have any more?", "How are you feeling?", "Are you ready?", "Haven't you had that baby yet?", "The secret to raising kids is...", "Remember to sleep when the baby sleeps.", "They grow up so fast...", "You're getting an epidural, right?", "Natural birth is the only way to go.", "Are you married?", "Have you finished the nursery?", "Are you scared?", "I don't have kids, but here's what I think...", "What language are you going to teach him?", "Where is she going to go to college?", "Have you got the preschool picked out yet?", "I knew this one lady who...", "Back in my day...", "Do you think you'll be a good mom?", "Do you have a name picked out yet?", "If you think that's bad, let me tell you...", "If you think pregnancy is bad, wait until the terrible twos!", "This isn't so bad, just wait until she's a teenager!", "It's a good thing you're having a boy, because girl's are the worst!", "It's a good thing you're having a girl, because boys are the worst!", "How many kids do you want?", "Have you read any parenting books?", "What's your parenting style?", "I NEVER did that", "Don't forget to avoid alcohol!", "Make sure you microwave your sandwich meats!", "Don't worry, it gets better.", "I read that breastfeeding makes babies obsessed with breasts.", "You should have tea. Pregnant women love tea!", "Are you hungry?", "You look tired."
 ];
 
 if(isSafari) {
@@ -37,16 +38,16 @@ if(isSafari) {
 function preload() {
 
 // load my world
-game.load.image('background', '/babby-game/public/img/kenney_backgroundElements/Samples/colored_talltrees.png');
+game.load.image('background', '/img/kenney_backgroundElements/Samples/colored_talltrees.png');
 
 // load the ground
-game.load.image('ground', '/babby-game/public/img/ground.png');
+game.load.image('ground', '/img/ground.png');
 
 // load Amanda
-game.load.spritesheet('amanda', '/babby-game/public/img/Amanda.png', 64, 64, 260);
+game.load.spritesheet('amanda', '/img/Amanda.png', 64, 64, 260);
 
 // load villain
-game.load.spritesheet('victor', '/babby-game/public/img/old_man.png', 64, 64, 260);
+game.load.spritesheet('victor', '/img/old_man.png', 64, 64, 260);
 
 scoreText = game.add.text(3, 0, 'Score: 0', {fontSize: '2em', fill: '#8B5742'});
 livesText = game.add.text(3, 20, 'Patience: 5', {fontSize: '2em', fill: '#8B5742'});
@@ -57,7 +58,7 @@ function showInstructions() {
 	var instructions1 = "Help Amanda avoid awkward situations!";
 	var instructions2 = "In a world where it's culturally appropriate to touch a woman's stomach,\nand ask her awkward questions,\nAmanda needs help stopping these weirdos!";
 	var instructions3 = "Run back and forth with your arrow keys to avoid the weirdos.";
-	var instructions4 = "Use the down arrow to stop them from coming closer.";
+	var instructions4 = "Use the down arrow to stop weirdos from coming closer.";
 	var instructions5 = "Use the up arrow to jump on them for extra points!";
 	var instructions6 = "Be careful not to get too close to the weirdos,\nor else you'll have to listen to their unsolicited advice,\nand Amanda will start to lose patience!";
 	var instructionList = [instructions1, instructions2, instructions3, instructions4, instructions5, instructions6];
@@ -76,6 +77,7 @@ function create() {
   // load phaser
   game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.input.onDown.add(unpause, self);
+	pauseKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
 
   // platforms (in case of obstacles if I have time)
   platforms = game.add.group();
@@ -167,6 +169,8 @@ function update() {
 	} else {
 		game.physics.arcade.overlap(amanda, villagers, minusOne, null, this);
 	}
+
+	pauseKey.onDown.add(pause, this);
 }
 
 function makeVillagers() {
@@ -237,6 +241,17 @@ function writeCenter(text) {
 function unpause(event) {
 	game.paused = false;
 	centerText.destroy();
+}
+
+function pause(event) {
+	console.log('line 247');
+	if(game.paused == false) {
+		game.paused = true;
+		console.log(game.paused);
+	} else {
+		game.paused = false;
+		console.log(game.paused);
+	}
 }
 
 // in case weirdos use Safari
