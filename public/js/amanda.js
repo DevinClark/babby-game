@@ -48,12 +48,6 @@ game.load.image('ground', '/img/ground.png');
 // load angry swear words
 game.load.image('angry', '/img/angry.png');
 
-game.load.image('angry', '/img/angry/angry1.png');
-game.load.image('angry', '/img/angry/angry2.png');
-game.load.image('angry', '/img/angry/angry3.png');
-game.load.image('angry', '/img/angry/angry4.png');
-game.load.image('angry', '/img/angry/angry5.png');
-
 // load Amanda
 game.load.spritesheet('amanda', '/img/Amanda.png', 64, 64, 260);
 
