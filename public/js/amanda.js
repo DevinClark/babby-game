@@ -237,10 +237,11 @@ function minusOne(amanda, villager) {
 
 function jumpOn(amanda, villager) {
 	currentVillager2 = villager;
+	amanda.bottom = villager.top;
+	amanda.left = villager.left;
 	villager.frame = 265;
 	game.paused = true;
 	var snark = snarkyAnswers[Math.floor(Math.random() * snarkyAnswers.length)];
-	console.log(snark);
 	writeCenter(snark);
 	score += 10;
 	scoreText.text = 'Score: ' + score;
