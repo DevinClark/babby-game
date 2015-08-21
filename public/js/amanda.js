@@ -192,8 +192,6 @@ function makeVillagers() {
 }
 
 function numVillagers(num) {
-	console.log(num);
-	console.log('line 150');
 	for(var i = 0; i < num; i++) {
 		victor = villagers.create(game.world.width + (game.world.width * (Math.random())), (game.world.height - 200), 'victor');
 		victor.animations.add('shuffle', [118, 119, 120, 121, 122, 123, 124, 125], 10, true);
