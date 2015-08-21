@@ -66,15 +66,18 @@ livesText = game.add.text(3, 20, 'Patience: 5', {fontSize: '2em', fill: '#8B5742
 }
 
 function showInstructions() {
-	var instructions1 = "Help Amanda avoid awkward situations!";
-	var instructions2 = "In a world where it's culturally appropriate to touch a woman's stomach,\nand ask her awkward questions,\nAmanda needs help stopping these weirdos!";
-	var instructions3 = "Run back and forth with your arrow keys to avoid the weirdos.";
-	var instructions4 = "Use the down arrow to stop them from coming closer.";
-	var instructions5 = "Use the up arrow to jump on them for extra points!";
-	var instructions6 = "Be careful not to get too close to the weirdos,\nor else you'll have to listen to their unsolicited advice,\nand Amanda will start to lose patience!";
-	var instructionList = [instructions1, instructions2, instructions3, instructions4, instructions5, instructions6];
+	var instructions1 = "Welcome! Press enter to begin.";
+	var instructions2 = "Congrats Amanda and Jesse!";
+	var instructions3 = "Help Amanda avoid awkward situations!";
+	var instructions4 = "In a world where it's culturally appropriate to touch a woman's stomach,\nand ask her awkward questions,\nAmanda needs help stopping these weirdos!";
+	var instructions5 = "Run back and forth with your arrow keys to avoid the weirdos.";
+	var instructions6 = "If you need a break, you can pause with P.";
+	var instructions7 = "Use the down arrow to stop them from coming closer.";
+	var instructions8 = "Use the spacebar or up arrow to jump on them for extra points!";
+	var instructions9 = "Be careful not to get too close to the weirdos,\nor else you'll have to listen to their unsolicited advice,\nand Amanda will start to lose patience!";
+	var instructionList = [instructions1, instructions2, instructions3, instructions4, instructions5, instructions6, instructions7, instructions8, instructions9];
 
-	if (instructionPage < 6) {
+	if (instructionPage < 9) {
 		writeCenter(instructionList[instructionPage], 1, null);
 		instructionPage++;
 		game.paused = true;
