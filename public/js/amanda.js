@@ -11,6 +11,7 @@ var victor;
 var ground;
 var platforms;
 var currentVillager;
+var currentVillager2;
 
 // variables
 var score = 0;
@@ -58,7 +59,7 @@ game.load.image('angry', '/img/angry.png');
 game.load.spritesheet('amanda', '/img/Amanda.png', 64, 64, 260);
 
 // load villain
-game.load.spritesheet('victor', '/img/old_man.png', 64, 64, 260);
+game.load.spritesheet('victor', '/img/old_man.png', 64, 64, 273);
 
 scoreText = game.add.text(3, 0, 'Score: 0', {fontSize: '2em', fill: '#8B5742'});
 livesText = game.add.text(3, 20, 'Patience: 5', {fontSize: '2em', fill: '#8B5742'});
@@ -152,6 +153,10 @@ function update() {
 		currentVillager.destroy();
 	}
 
+	if(currentVillager2) {
+		currentVillager2.destroy();
+	}
+
 	if(!started) {
 		showInstructions();
 	}
@@ -217,10 +222,9 @@ function minusOne(amanda, villager) {
 	currentVillager = villager;
 	lives -= 1;
 	livesText.text = 'Patience: ' + lives;
-	var awk = awkwardQuestions[Math.round(Math.random() * awkwardQuestions.length)];
+	var awk = awkwardQuestions[Math.floor(Math.random() * awkwardQuestions.length)];
 	writeCenter(awk);
 	game.input.onDown.add(unpause, self);
-	console.log(self);
 	if(lives == 0) {
 		amanda.x = (game.world.width / 2) - (amanda.width / 1.9); // GAME OVER
 		rawr.scale.setTo(0.9,0.9);
@@ -232,17 +236,14 @@ function minusOne(amanda, villager) {
 }
 
 function jumpOn(amanda, villager) {
-	// villager.destroy();
-	villager.frame = 247;
-	if(amanda.body.touching.down) {
-		game.paused = true;
-		var snark = snarkyAnswers[Math.round(Math.random() * awkwardQuestions.length)];
-		writeCenter(snark);
-		score += 10;
-		scoreText.text = 'Score: ' + score;
-	}
-	villager.destroy();
-	game.input.onDown.add(unpause, self);
+	currentVillager2 = villager;
+	villager.frame = 265;
+	game.paused = true;
+	var snark = snarkyAnswers[Math.floor(Math.random() * snarkyAnswers.length)];
+	console.log(snark);
+	writeCenter(snark);
+	score += 10;
+	scoreText.text = 'Score: ' + score;
 }
 
 function jumpUp() {
@@ -276,7 +277,7 @@ function writeCenter(text) {
 function unpause(event, villager) {
 	game.paused = false;
 	centerText.destroy();
-	// rawr.destroy();
+	rawr.destroy();
 	rawrX += 0.1;
 	rawrY += 0.1;
 }
