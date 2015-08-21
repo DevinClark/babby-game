@@ -26,6 +26,9 @@ var instructionPage = 0;
 var rawr;
 var rawrX = 0.25;
 var rawrY = 0.25;
+var pauseKey;
+var spaceKey;
+var enterKey;
 var awkwardQuestions = [
 	"When is the baby due?", "Are you having a boy or a girl?", "You look like you're ready to pop!", "Can I touch your belly?", "You look so small!", "You look so big!", "Are you pregnant?", "What's the baby doing in there?", "Do you need to sit down?", "Here let me get that for you...", "You must be having a girl because...", "You must be having a boy because...", "Are you sure you aren't having twins??", "Are you old enough to be having a baby?", "Should you be doing this in your condition?", "Are you excited?", "Don't you just LOVE being pregnant?", "How old are you?", "Will you have any more?", "How are you feeling?", "Are you ready?", "Haven't you had that baby yet?", "The secret to raising kids is...", "Remember to sleep when the baby sleeps.", "They grow up so fast...", "You're getting an epidural, right?", "Natural birth is the only way to go.", "Are you married?", "Have you finished the nursery?", "Are you scared?", "I don't have kids, but here's what I think...", "What language are you going to teach him?", "Where is she going to go to college?", "Have you got the preschool picked out yet?", "I knew this one lady who...", "Back in my day...", "Do you think you'll be a good mom?", "Do you have a name picked out yet?", "If you think that's bad, let me tell you...", "If you think pregnancy is bad, wait until the terrible twos!", "This isn't so bad, just wait until she's a teenager!", "It's a good thing you're having a boy, because girl's are the worst!", "It's a good thing you're having a girl, because boys are the worst!", "How many kids do you want?", "Have you read any parenting books?", "What's your parenting style?", "I NEVER did that", "Don't forget to avoid alcohol!", "Make sure you microwave your sandwich meats!", "Don't worry, it gets better."
 ];
@@ -82,6 +85,9 @@ function create() {
   // load phaser
   game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.input.onDown.add(unpause, self);
+	pauseKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
+	enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+	spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
   // platforms (in case of obstacles if I have time)
   platforms = game.add.group();
@@ -173,6 +179,9 @@ function update() {
 	} else {
 		game.physics.arcade.overlap(amanda, villagers, minusOne, null, this);
 	}
+	pauseKey.onDown.add(pause, this);
+	enterKey.onDown.add(unpause, this);
+	spaceKey.onDown.add(jumpUp, this);
 }
 
 function makeVillagers() {
@@ -224,6 +233,12 @@ function jumpOn(amanda, villager) {
 	console.log(score);
 }
 
+function jumpUp() {
+	if (amanda.body.touching.down) {
+		amanda.body.velocity.y = -600;
+	}
+}
+
 function hit(amanda, villager) {
 	villager.destroy();
 	score += 2;
@@ -253,6 +268,15 @@ function unpause(event) {
 	rawr.destroy();
 	rawrX += 0.1;
 	rawrY += 0.1;
+}
+
+function pause(event) {
+	if(game.paused == false) {
+		game.paused = true;
+		console.log(game.paused);
+	} else {
+		game.paused = false;
+	}
 }
 
 // in case weirdos use Safari
