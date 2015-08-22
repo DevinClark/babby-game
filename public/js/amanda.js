@@ -11,6 +11,7 @@ var victor;
 var ground;
 var platforms;
 var currentVillager;
+var currentVillager2;
 
 // variables
 var score = 0;
@@ -31,6 +32,9 @@ var spaceKey;
 var enterKey;
 var awkwardQuestions = [
 	"When is the baby due?", "Are you having a boy or a girl?", "You look like you're ready to pop!", "Can I touch your belly?", "You look so small!", "You look so big!", "Are you pregnant?", "What's the baby doing in there?", "Do you need to sit down?", "Here let me get that for you...", "You must be having a girl because...", "You must be having a boy because...", "Are you sure you aren't having twins??", "Are you old enough to be having a baby?", "Should you be doing this in your condition?", "Are you excited?", "Don't you just LOVE being pregnant?", "How old are you?", "Will you have any more?", "How are you feeling?", "Are you ready?", "Haven't you had that baby yet?", "The secret to raising kids is...", "Remember to sleep when the baby sleeps.", "They grow up so fast...", "You're getting an epidural, right?", "Natural birth is the only way to go.", "Are you married?", "Have you finished the nursery?", "Are you scared?", "I don't have kids, but here's what I think...", "What language are you going to teach him?", "Where is she going to go to college?", "Have you got the preschool picked out yet?", "I knew this one lady who...", "Back in my day...", "Do you think you'll be a good mom?", "Do you have a name picked out yet?", "If you think that's bad, let me tell you...", "If you think pregnancy is bad, wait until the terrible twos!", "This isn't so bad, just wait until she's a teenager!", "It's a good thing you're having a boy, because girl's are the worst!", "It's a good thing you're having a girl, because boys are the worst!", "How many kids do you want?", "Have you read any parenting books?", "What's your parenting style?", "I NEVER did that", "Don't forget to avoid alcohol!", "Make sure you microwave your sandwich meats!", "Don't worry, it gets better."
+];
+var snarkyAnswers = [
+	"NO, you MAY NOT touch my belly!", "NO, I am NOT having twins.", "I do not actually love being pregnant, leave me alone.", "LEAVE ME ALONE!", "You need to be garbage-collected!", "How is this any of your business?", "Can I touch YOUR belly?", "Take that!", "Thank you for your advice,\nperson-I've-never-met-before.", "Pregnant women don't pop -- that's not how this works.", "Why are you asking if I'm scared??\nWhat's wrong with you?", "No, I'm not hungry. Go. Away.", "There isn’t enough Purell to wipe the creepiness off!", "How can I avoid alcohol when I have to talk to you??", "You are causing global warming, because you have me fuming mad!", "I have an app called Decency, and you just broke the build.", "Have you ever even SEEN a child?", "You are lord of the 3-ring-circus", "Who asked you?!", "My baby, my business.", "And who are you? DHS?", "You are being a dark cloud in my array of sunshine.", "Go. Away.", "Oh yeah? How did your kids turn out?", "Maybe you should Google some MANNERS!", "Is it difficult to fit your whole foot into your mouth?"
 ];
 
 if(isSafari) {
@@ -55,7 +59,7 @@ game.load.image('angry', '/babby-game/public/img/angry.png');
 game.load.spritesheet('amanda', '/babby-game/public/img/Amanda.png', 64, 64, 260);
 
 // load villain
-game.load.spritesheet('victor', '/babby-game/public/img/old_man.png', 64, 64, 260);
+game.load.spritesheet('victor', '/babby-game/public/img/old_man.png', 64, 64, 273);
 
 scoreText = game.add.text(3, 0, 'Score: 0', {fontSize: '2em', fill: '#8B5742'});
 livesText = game.add.text(3, 20, 'Patience: 5', {fontSize: '2em', fill: '#8B5742'});
@@ -149,6 +153,10 @@ function update() {
 		currentVillager.destroy();
 	}
 
+	if(currentVillager2) {
+		currentVillager2.destroy();
+	}
+
 	if(!started) {
 		showInstructions();
 	}
@@ -214,7 +222,7 @@ function minusOne(amanda, villager) {
 	currentVillager = villager;
 	lives -= 1;
 	livesText.text = 'Patience: ' + lives;
-	var awk = awkwardQuestions[Math.round(Math.random() * awkwardQuestions.length)];
+	var awk = awkwardQuestions[Math.floor(Math.random() * awkwardQuestions.length)];
 	writeCenter(awk);
 	game.input.onDown.add(unpause, self);
 	if(lives == 0) {
@@ -228,10 +236,15 @@ function minusOne(amanda, villager) {
 }
 
 function jumpOn(amanda, villager) {
-	villager.destroy();
+	currentVillager2 = villager;
+	amanda.bottom = villager.top;
+	amanda.left = villager.left;
+	villager.frame = 265;
+	game.paused = true;
+	var snark = snarkyAnswers[Math.floor(Math.random() * snarkyAnswers.length)];
+	writeCenter(snark);
 	score += 10;
 	scoreText.text = 'Score: ' + score;
-	console.log(score);
 }
 
 function jumpUp() {
@@ -244,7 +257,6 @@ function hit(amanda, villager) {
 	villager.destroy();
 	score += 2;
 	scoreText.text = 'Score: ' + score;
-	console.log(score);
 }
 
 function killEmAll(villager) {
@@ -263,7 +275,7 @@ function writeCenter(text) {
 	centerText.fill = '#8B5742';
 }
 
-function unpause(event) {
+function unpause(event, villager) {
 	game.paused = false;
 	centerText.destroy();
 	rawr.destroy();
