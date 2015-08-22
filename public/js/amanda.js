@@ -47,19 +47,19 @@ if(isSafari) {
 function preload() {
 
 // load my world
-game.load.image('background', '/babby-game/public/img/kenney_backgroundElements/Samples/colored_talltrees.png');
+game.load.image('background', '/img/kenney_backgroundElements/Samples/colored_talltrees.png');
 
 // load the ground
-game.load.image('ground', '/babby-game/public/img/ground.png');
+game.load.image('ground', '/img/ground.png');
 
 // load angry swear words
-game.load.image('angry', '/babby-game/public/img/angry.png');
+game.load.image('angry', '/img/angry.png');
 
 // load Amanda
-game.load.spritesheet('amanda', '/babby-game/public/img/Amanda.png', 64, 64, 260);
+game.load.spritesheet('amanda', '/img/Amanda.png', 64, 64, 260);
 
 // load villain
-game.load.spritesheet('victor', '/babby-game/public/img/old_man.png', 64, 64, 273);
+game.load.spritesheet('victor', '/img/old_man.png', 64, 64, 273);
 
 scoreText = game.add.text(3, 0, 'Score: 0', {fontSize: '2em', fill: '#8B5742'});
 livesText = game.add.text(3, 20, 'Patience: 5', {fontSize: '2em', fill: '#8B5742'});
@@ -92,6 +92,10 @@ function create() {
   // load phaser
   game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.input.onDown.add(unpause, self);
+	// this.game.input.keyboard.onDownCallback = function(event) { // removing this as it breaks the pause button
+	// 	unpause(event);
+	// 	console.log("I called the pause function");
+	// }
 	pauseKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
 	enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
 	spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -242,7 +246,7 @@ function jumpOn(amanda, villager) {
 	villager.frame = 265;
 	game.paused = true;
 	var snark = snarkyAnswers[Math.floor(Math.random() * snarkyAnswers.length)];
-	writeCenter(snark);
+	writeCenter2(snark);
 	score += 10;
 	scoreText.text = 'Score: ' + score;
 }
@@ -275,7 +279,19 @@ function writeCenter(text) {
 	centerText.fill = '#8B5742';
 }
 
-function unpause(event, villager) {
+function writeCenter2(text) {
+	centerText.destroy();
+	centerText = game.add.text(game.world.centerX, 100, text);
+	centerText.anchor.set(0.5);
+	centerText.align = 'center';
+
+	//	Font style
+	centerText.font = 'Arial';
+	centerText.fontSize = '3em';
+	centerText.fill = '#98A148';
+}
+
+function unpause(event) {
 	game.paused = false;
 	centerText.destroy();
 	rawr.destroy();
