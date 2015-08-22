@@ -240,9 +240,9 @@ function jumpOn(amanda, villager) {
 	amanda.bottom = villager.top;
 	amanda.left = villager.left;
 	villager.frame = 265;
-	game.paused = true;
-	var snark = snarkyAnswers[Math.floor(Math.random() * snarkyAnswers.length)];
-	writeCenter(snark);
+	// game.paused = true;
+	// var snark = snarkyAnswers[Math.floor(Math.random() * snarkyAnswers.length)];
+	// writeCenter(snark);
 	score += 10;
 	scoreText.text = 'Score: ' + score;
 }
