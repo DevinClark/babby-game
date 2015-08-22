@@ -302,7 +302,6 @@ function unpause(event) {
 function pause(event) {
 	if(game.paused == false) {
 		game.paused = true;
-		console.log(game.paused);
 	} else {
 		game.paused = false;
 	}
