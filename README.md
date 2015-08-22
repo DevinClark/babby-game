@@ -4,7 +4,7 @@ In this game, you are playing the character of Amanda Harlin, a pregnant woman w
 
 Use the arrow keys to run back forth, or the up arrow (or the spacebar) to jump on the weirdos. You can use the down arrow to stop them in their tracks. If you find yourself needing a break, you can press P for pause.
 
-There are two versions of this game. You can play the game [here](), or you can download the game and play it locally. I recommend playing to locally as there is some funny bonus content in the master branch.
+There are two versions of this game. You can play the game [here](http://devinclark.github.io/babby-game/public/), or you can download the game and play it locally. I recommend playing to locally as there is some funny bonus content in the master branch.
 
 To play the game locally, just clone the repository and cd into it using your terminal. Once in the repo, use 'http-server' to start the server and go to 'localhost: 8080' in your browser. Have fun!
 
